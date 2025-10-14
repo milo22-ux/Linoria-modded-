@@ -1,4 +1,3 @@
-
 local cloneref = cloneref or function(o) return o end
 local InputService: UserInputService = cloneref(game:GetService('UserInputService'));
 local TextService: TextService = cloneref(game:GetService('TextService'));
@@ -4166,18 +4165,13 @@ local function OnPlayerChange()
 	end;
 end;
 
-Players.PlayerAdded:Connect(OnPlayerChange);
-Players.PlayerRemoving:Connect(OnPlayerChange);
-
-getgenv().Library = Library
-return Library
 do
     local UserInputService = game:GetService("UserInputService")
 
     task.spawn(function()
-        repeat task.wait() until Library and Library.ScreenGui
+        repeat task.wait() until Library and (Library.ScreenGui or Library.Main)
 
-        local gui = Library.ScreenGui
+        local gui = Library.ScreenGui or Library.Main
         local uiVisible = true
         local toggleKey = Enum.KeyCode.RightShift
 
@@ -4189,8 +4183,19 @@ do
                     gui.Enabled = uiVisible
                 elseif Library.SetOpen then
                     Library:SetOpen(uiVisible)
+                else
+                    pcall(function()
+                        gui.Visible = uiVisible
+                    end)
                 end
             end
         end)
     end)
 	end
+	
+Players.PlayerAdded:Connect(OnPlayerChange);
+Players.PlayerRemoving:Connect(OnPlayerChange);
+
+getgenv().Library = Library
+return Library
+do
