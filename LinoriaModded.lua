@@ -4197,5 +4197,38 @@ Players.PlayerAdded:Connect(OnPlayerChange);
 Players.PlayerRemoving:Connect(OnPlayerChange);
 
 getgenv().Library = Library
-return Library
+
+-- Toggle UI visibility keybind
 do
+    local UserInputService = game:GetService("UserInputService")
+
+    if Library and Library.ScreenGui then
+        Library.ScreenGui.Enabled = true
+    end
+
+    task.spawn(function()
+        repeat task.wait() until Library and Library.ScreenGui
+
+        local gui = Library.ScreenGui
+        local uiVisible = true
+        local toggleKey = Enum.KeyCode.RightShift
+
+        UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+            if input.KeyCode == toggleKey then
+                uiVisible = not uiVisible
+                if gui and gui.Enabled ~= nil then
+                    gui.Enabled = uiVisible
+                elseif Library.SetOpen then
+                    Library:SetOpen(uiVisible)
+                else
+                    pcall(function()
+                        gui.Visible = uiVisible
+                    end)
+                end
+            end
+        end)
+    end)
+end
+
+return Library
