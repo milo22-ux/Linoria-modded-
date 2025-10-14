@@ -4171,3 +4171,26 @@ Players.PlayerRemoving:Connect(OnPlayerChange);
 
 getgenv().Library = Library
 return Library
+do
+    local UserInputService = game:GetService("UserInputService")
+
+    task.spawn(function()
+        repeat task.wait() until Library and Library.ScreenGui
+
+        local gui = Library.ScreenGui
+        local uiVisible = true
+        local toggleKey = Enum.KeyCode.RightShift
+
+        UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+            if input.KeyCode == toggleKey then
+                uiVisible = not uiVisible
+                if gui then
+                    gui.Enabled = uiVisible
+                elseif Library.SetOpen then
+                    Library:SetOpen(uiVisible)
+                end
+            end
+        end)
+    end)
+	end
